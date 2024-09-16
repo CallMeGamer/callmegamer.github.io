@@ -7,33 +7,61 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to CallMeGamer's Game Hub</h1>
-        <p>Choose a game below and have fun!</p>
-    </header>
-    
-    <main>
-        <div class="game-card">
-            <h2>Space Tycoon</h2>
-            <img src="spacetycoon-thumbnail.jpg" alt="Space Tycoon">
-            <a href="spacetycoon" class="play-btn">Play Now</a>
+    <ul class="background">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <div class="navbar">
+        <ul>
+            <li onclick="window.location='#';">Game Hub</li>
+            <li onclick="window.location='spacetycoon';">Space Tycoon</li>
+            <li onclick="window.location='zombie';">Zombie Survival</li>
+            <li onclick="window.location='chess';">Chess Master</li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h1 class="title">Welcome to CallMeGamer's Game Hub</h1>
+        <p class="description">
+            This is your central hub for all the exciting games developed by CallMeGamer. Select a game from the sidebar to start playing.
+        </p>
+
+        <div class="container">
+            <div class="card" onclick="window.location='spacetycoon';">
+                <div class="title">Space Tycoon</div>
+                <div class="more">Play Now</div>
+            </div>
+            <div class="card" onclick="window.location='zombie';">
+                <div class="title">Zombie Survival</div>
+                <div class="more">Play Now</div>
+            </div>
+            <div class="card" onclick="window.location='chess';">
+                <div class="title">Chess Master</div>
+                <div class="more">Play Now</div>
+            </div>
         </div>
-        
-        <div class="game-card">
-            <h2>Zombie Survival</h2>
-            <img src="zombie-thumbnail.jpg" alt="Zombie Survival">
-            <a href="zombie" class="play-btn">Play Now</a>
-        </div>
-        
-        <div class="game-card">
-            <h2>Chess Master</h2>
-            <img src="chess-thumbnail.jpg" alt="Chess Master">
-            <a href="chess" class="play-btn">Play Now</a>
-        </div>
-    </main>
-    
-    <footer>
-        <p>&copy; 2024 CallMeGamer. All rights reserved.</p>
-    </footer>
+    </div>
+
+    <script src="scripts.js"></script>
 </body>
 </html>

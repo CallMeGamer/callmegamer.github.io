@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CallMeGamer GameHub - Dashboard</title>
+    <title>CallMeGamer GameHub - Login</title>
     <style>
-        /* Body Styling */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -16,7 +15,6 @@
             background: linear-gradient(to right, #9f7aea, #ed64a6);
         }
 
-        /* Container Styling */
         .container {
             background-color: white;
             padding: 2rem;
@@ -27,24 +25,17 @@
             text-align: center;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        /* Title Styling */
         .title {
             font-size: 2rem;
             color: #2d3748;
             margin-bottom: 1.5rem;
         }
 
-        /* Description Styling */
         .description {
             color: #718096;
             margin-bottom: 1.5rem;
         }
 
-        /* Google Button Styling */
         .google-btn {
             display: flex;
             align-items: center;
@@ -64,53 +55,18 @@
             background-color: #f7fafc;
         }
 
-        /* Google Icon Styling */
         .google-icon {
             width: 20px;
             height: 20px;
-        }
-
-        /* Dashboard Styles */
-        .dashboard {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .games-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .game-card {
-            background-color: #f1f5f9;
-            padding: 1rem;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .game-card:hover {
-            transform: scale(1.05);
         }
     </style>
 
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAxlEBkfszBkZt6BVezv4_oS9_paOz9NXs",
             authDomain: "callmegamergamehub.firebaseapp.com",
@@ -123,88 +79,48 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
+        const db = getDatabase(app);
 
-        // Function to show the dashboard
-        function showDashboard(user) {
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            document.getElementById('user-name').textContent = user.displayName;
-            document.getElementById('user-email').textContent = user.email;
-
-            // Fetch and display user currency
-            const userId = user.uid;
-            get(ref(db, 'users/' + userId + '/currency')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    document.getElementById('user-currency').textContent = snapshot.val();
-                } else {
-                    set(ref(db, 'users/' + userId + '/currency'), 100);
-                    document.getElementById('user-currency').textContent = 100;
-                }
-            });
-        }
-
-        // Function to handle Google sign-in
+        // Handle Google sign-in
         document.getElementById('googleSignInBtn').addEventListener('click', () => {
             signInWithPopup(auth, provider)
                 .then((result) => {
                     const user = result.user;
-                    showDashboard(user);
+                    const userId = user.uid;
+
+                    // Store user info in the database
+                    set(ref(db, 'users/' + userId), {
+                        username: user.displayName,
+                        email: user.email,
+                        currency: 100  // Starting currency for new users
+                    });
+
+                    // Redirect to dashboard.html after login
+                    window.location.href = 'dashboard.html';
                 })
                 .catch((error) => {
                     console.error("Error signing in:", error);
                 });
         });
 
-        // Function to handle sign-out
-        document.getElementById('signOutBtn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                document.getElementById('dashboard').classList.add('hidden');
-                document.getElementById('login').classList.remove('hidden');
-            }).catch((error) => {
-                console.error("Error signing out:", error);
-            });
-        });
-
-        // Check if the user is already logged in
+        // Check if user is already logged in
         auth.onAuthStateChanged((user) => {
             if (user) {
-                showDashboard(user);
+                // If user is already logged in, redirect to the dashboard
+                window.location.href = 'dashboard.html';
             }
         });
     </script>
 </head>
 <body>
-    <!-- Login Section -->
-    <div id="login" class="container">
+    <div class="container">
         <h1 class="title">Welcome to CallMeGamer GameHub</h1>
         <p class="description">Sign in to access your gaming dashboard</p>
         <div class="google-btn" id="googleSignInBtn">
             <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Icon">
             Sign in with Google
         </div>
-    </div>
-
-    <!-- Dashboard Section -->
-    <div id="dashboard" class="dashboard hidden">
-        <div class="user-info">
-            <h2 id="user-name">User Name</h2>
-            <p id="user-email">user@example.com</p>
-            <p>Currency: <span id="user-currency">0</span></p>
-        </div>
-        <div class="games-list">
-            <div class="game-card">
-                <h3>Space Tycoon</h3>
-                <button>Play Now</button>
-            </div>
-            <div class="game-card">
-                <h3>Zombie Survival</h3>
-                <button>Play Now</button>
-            </div>
-            <!-- Add more game cards as needed -->
-        </div>
-        <button id="signOutBtn">Sign Out</button>
     </div>
 </body>
 </html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallMeGamer GameHub - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script type="module">
+        import { useState } from 'react';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxlEBkfszBkZt6BVezv4_oS9_paOz9NXs",
+            authDomain: "callmegamergamehub.firebaseapp.com",
+            projectId: "callmegamergamehub",
+            storageBucket: "callmegamergamehub.appspot.com",
+            messagingSenderId: "640120758569",
+            appId: "1:640120758569:web:11370e01ffacdf2c1b1738",
+            databaseURL: "https://callmegamergamehub-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let darkMode = false;
+
+        // Handle dark mode toggle
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark', darkMode);
+        }
+
+        // Fetch and display user data on the dashboard
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('user-name').textContent = user.displayName;
+                document.getElementById('user-email').textContent = user.email;
+
+                const userId = user.uid;
+                get(ref(db, 'users/' + userId + '/currency')).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        document.getElementById('user-currency').textContent = snapshot.val();
+                    } else {
+                        document.getElementById('user-currency').textContent = "No data available";
+                    }
+                });
+            } else {
+                // If not logged in, redirect back to login page
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Handle sign out
+        function handleSignOut() {
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen bg-background text-foreground transition-colors duration-300">
+        <div class="container mx-auto p-4">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                    GamerHub
+                </h1>
+                <div class="flex items-center gap-4">
+                    <!-- Dark Mode Toggle Button -->
+                    <button id="darkModeToggle" class="p-2 border rounded-full" onclick="toggleDarkMode()">
+                        <span id="darkModeIcon">☀️</span>
+                    </button>
+
+                    <!-- Settings (Avatar, Email, Currency) -->
+                    <div class="p-2 border rounded-full cursor-pointer">
+                        <div id="user-name" class="font-semibold">User Name</div>
+                        <div id="user-email" class="text-sm">user@example.com</div>
+                        <div>Currency: <span id="user-currency">0</span></div>
+                    </div>
+
+                    <!-- Sign Out Button -->
+                    <button id="signOutBtn" class="p-2 border rounded-full text-red-500" onclick="handleSignOut()">Sign Out</button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="relative mb-6">
+                <input type="text" placeholder="Search games..." class="pl-10 pr-4 py-2 w-full rounded-lg border focus:outline-none" />
+            </div>
+
+            <!-- Games List -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Space Tycoon -->
+                <div class="p-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg text-white">
+                    <h2 class="text-xl font-bold">Space Tycoon</h2>
+                    <button onclick="window.location.href='spacetycoon.html'" class="mt-4 bg-white text-black px-4 py-2 rounded">Play Now</button>
+                </div>
+                <!-- Zombie Survival -->
+                <div class="p-6 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg text-white">
+                    <h2 class="text-xl font-bold">Zombie Survival</h2>
+                    <button onclick="window.location.href='zombie.html'" class="mt-4 bg-white text-black px-4 py-2 rounded">Play Now</button>
+                </div>
+                <!-- Chess Master -->
+                <div class="p-6 bg-gradient-to-br from-red-500 to-yellow-500 rounded-lg text-white">
+                    <h2 class="text-xl font-bold">Chess Master</h2>
+                    <button onclick="window.location.href='chess.html'" class="mt-4 bg-white text-black px-4 py-2 rounded">Play Now</button>
+                </div>
+                <!-- Knight's Quest -->
+                <div class="p-6 bg-gradient-to-br from-green-500 to-yellow-400 rounded-lg text-white">
+                    <h2 class="text-xl font-bold">Knight's Quest</h2>
+                    <button onclick="window.location.href='knight.html'" class="mt-4 bg-white text-black px-4 py-2 rounded">Play Now</button>
+                </div>
+                <!-- Idle Evolution -->
+                <div class="p-6 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg text-white">
+                    <h2 class="text-xl font-bold">Idle Evolution</h2>
+                    <button onclick="window.location.href='evolve.html'" class="mt-4 bg-white text-black px-4 py-2 rounded">Play Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

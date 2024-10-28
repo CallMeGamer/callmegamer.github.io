@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamerHub - Login</title>
+    <style>
+        /* Body Styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to right, #9f7aea, #ed64a6);
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Title Styling */
+        .title {
+            font-size: 2rem;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Description Styling */
+        .description {
+            color: #718096;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Google Button Styling */
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #4a5568;
+            transition: background-color 0.3s;
+        }
+
+        .google-btn:hover {
+            background-color: #f7fafc;
+        }
+
+        /* Google Icon Styling */
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Welcome to GamerHub</h1>
+        <p class="description">Sign in to access your gaming dashboard</p>
+        <div class="google-btn">
+            <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Icon">
+            Sign in with Google
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.google-btn').addEventListener('click', function() {
+            // Placeholder for Google sign-in action
+            alert('Google sign-in functionality to be added.');
+        });
+    </script>
+</body>
+</html>

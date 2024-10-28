@@ -22,8 +22,8 @@ const db = getDatabase(app);
 onAuthStateChanged(auth, (user) => {
     if (user) {
         // Display user name and email
-        document.getElementById('user-name').textContent = user.displayName;
-        document.getElementById('user-email').textContent = user.email;
+        document.getElementById('user-name').textContent = user.displayName || "No Name";
+        document.getElementById('user-email').textContent = user.email || "No Email";
 
         // Fetch user's currency from the database
         const userId = user.uid;

@@ -66,22 +66,41 @@
             height: 20px;
         }
     </style>
+
+    <!-- Google OAuth Client Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="container">
         <h1 class="title">Welcome to GamerHub</h1>
         <p class="description">Sign in to access your gaming dashboard</p>
-        <div class="google-btn">
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="google-btn" id="buttonDiv">
             <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Icon">
             Sign in with Google
         </div>
     </div>
 
     <script>
-        document.querySelector('.google-btn').addEventListener('click', function() {
-            // Placeholder for Google sign-in action
-            alert('Google sign-in functionality to be added.');
-        });
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+            // Here you would handle the response and send it to your backend for authentication
+        }
+
+        window.onload = function() {
+            google.accounts.id.initialize({
+                client_id: "YOUR_GOOGLE_CLIENT_ID", // Replace with your Google client ID
+                callback: handleCredentialResponse
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("buttonDiv"),
+                { theme: "outline", size: "large" }  // customization attributes
+            );
+        }
     </script>
 </body>
 </html>

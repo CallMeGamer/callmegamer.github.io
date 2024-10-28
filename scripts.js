@@ -18,13 +18,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// In-page console logging function
+// Function to log messages to the in-page console
 function logMessage(message) {
     const consoleBox = document.getElementById('console-box');
     const messageElement = document.createElement('p');
     messageElement.textContent = message;
     consoleBox.appendChild(messageElement);
-    consoleBox.scrollTop = consoleBox.scrollHeight;
+    consoleBox.scrollTop = consoleBox.scrollHeight;  // Auto-scroll to the latest message
 }
 
 // 1. Check if the user is logged in on page load

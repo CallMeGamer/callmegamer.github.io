@@ -4,81 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CallMeGamer GameHub - Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
             display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(to right, #9f7aea, #ed64a6);
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #fff;
         }
-
-        .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+        .login-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
             width: 100%;
+            max-width: 400px;
             text-align: center;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-
-        .title {
-            font-size: 2rem;
-            color: #2d3748;
-            margin-bottom: 1.5rem;
+        #status-message {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #333;
         }
-
-        .description {
-            color: #718096;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Google Button Styling */
-        .google-btn {
+        .google-button {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background-color: white;
-            border: 1px solid #e2e8f0;
-            padding: 10px;
+            background-color: #4285f4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1rem;
-            color: #4a5568;
-            transition: background-color 0.3s;
-            width: 100%;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
-
-        .google-btn:hover {
-            background-color: #f7fafc;
-        }
-
-        .google-icon {
+        .google-button img {
             width: 20px;
             height: 20px;
         }
-
-        /* Disclaimer Styling */
-        .disclaimer {
-            font-size: 0.9rem;
-            color: #555;
-            margin-top: 20px;
-            line-height: 1.4;
-            text-align: left;
-        }
     </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="text-3xl font-bold mb-4">Welcome to CallMeGamer GameHub</h1>
+        <p class="mb-6 text-gray-700">Sign in to access your gaming dashboard.</p>
 
-    <!-- Firebase SDK -->
+        <!-- Google Sign-In Button -->
+        <button id="google-signin" class="google-button">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Google_icon_%282020%29.svg" alt="Google Logo">
+            Sign in with Google
+        </button>
+
+        <!-- Status Message Box -->
+        <div id="status-message"></div>
+    </div>
+
     <script type="module">
+        // Import Firebase and Authentication modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
+        
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAxlEBkfszBkZt6BVezv4_oS9_paOz9NXs",
             authDomain: "callmegamergamehub.firebaseapp.com",
@@ -89,56 +82,46 @@
             databaseURL: "https://callmegamergamehub-default-rtdb.firebaseio.com/"
         };
 
+        // Initialize Firebase and Authentication
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
         const db = getDatabase(app);
+        const provider = new GoogleAuthProvider();
 
-        // Handle Google sign-in
-        document.getElementById('googleSignInBtn').addEventListener('click', () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    const user = result.user;
-                    const userId = user.uid;
+        // Display status messages in the status message box
+        function displayStatusMessage(message, color = '#333') {
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.textContent = message;
+            statusMessage.style.color = color;
+        }
 
-                    // Store user info in the database
-                    set(ref(db, 'users/' + userId), {
-                        username: user.displayName,
-                        email: user.email,
-                        currency: 100  // Starting currency for new users
+        // Google Sign-In Function
+        document.getElementById('google-signin').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+
+                if (user) {
+                    const email = user.email.replace('.', '_'); // Firebase path-friendly email
+                    const userDataRef = ref(db, `users/${email}`);
+
+                    // Initialize user data in Firebase Realtime Database if not present
+                    set(userDataRef, {
+                        Username: user.displayName || "Guest",
+                        Currency: 100,
+                        preference: "light"
+                    }).then(() => {
+                        displayStatusMessage("Welcome, " + user.displayName + "! Redirecting...", "green");
+                        setTimeout(() => {
+                            window.location.href = "dashboard"; // Redirect to dashboard
+                        }, 1500);
                     });
-
-                    // Redirect to dashboard after login (no .html)
-                    window.location.href = 'dashboard';
-                })
-                .catch((error) => {
-                    console.error("Error signing in:", error);
-                });
-        });
-
-        // Check if user is already logged in
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // If user is already logged in, redirect to the dashboard
-                window.location.href = 'dashboard';
+                }
+            } catch (error) {
+                console.error("Error signing in:", error);
+                displayStatusMessage("Failed to sign in. Please try again.", "red");
             }
         });
     </script>
-</head>
-<body>
-    <div class="container">
-        <h1 class="title">Welcome to CallMeGamer GameHub</h1>
-        <p class="description">Sign in to access your gaming dashboard</p>
-        <!-- Sign in with Google Button -->
-        <div class="google-btn" id="googleSignInBtn">
-            <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Icon">
-            Sign in with Google
-        </div>
-
-        <!-- Disclaimer -->
-        <p class="disclaimer">
-            <strong>Disclaimer:</strong> This game site is currently undergoing changes. Please expect that some features may be limited, not work properly, or not be available yet. We appreciate your patience as we work on improving the experience!
-        </p>
-    </div>
 </body>
 </html>

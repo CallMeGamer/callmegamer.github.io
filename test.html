@@ -3,130 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CallMeGamer GameHub - Login</title>
-    <style>
-        /* Body Styling */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(to right, #9f7aea, #ed64a6);
-        }
-
-        /* Container Styling */
-        .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-
-        /* Title Styling */
-        .title {
-            font-size: 2rem;
-            color: #2d3748;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Description Styling */
-        .description {
-            color: #718096;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Google Button Styling */
-        .google-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: white;
-            border: 1px solid #e2e8f0;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            color: #4a5568;
-            transition: background-color 0.3s;
-        }
-
-        .google-btn:hover {
-            background-color: #f7fafc;
-        }
-
-        /* Google Icon Styling */
-        .google-icon {
-            width: 20px;
-            height: 20px;
-        }
-    </style>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase libraries
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
-        // Firebase configuration using your provided credentials
-        const firebaseConfig = {
-            apiKey: "AIzaSyAxlEBkfszBkZt6BVezv4_oS9_paOz9NXs",
-            authDomain: "callmegamergamehub.firebaseapp.com",
-            projectId: "callmegamergamehub",
-            storageBucket: "callmegamergamehub.appspot.com",
-            messagingSenderId: "640120758569",
-            appId: "1:640120758569:web:11370e01ffacdf2c1b1738",
-            databaseURL: "https://callmegamergamehub-default-rtdb.firebaseio.com/"
-        };
-
-        // Initialize Firebase app
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-
-        // Google sign-in provider setup
-        const provider = new GoogleAuthProvider();
-
-        // Function to handle Google Sign-In
-        document.getElementById('googleSignInBtn').addEventListener('click', () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    const user = result.user;
-                    console.log("User signed in:", user);
-
-                    // Save the user's data in the Realtime Database
-                    const userId = user.uid;
-                    set(ref(db, 'users/' + userId), {
-                        username: user.displayName,
-                        email: user.email,
-                        currency: 100  // Starting currency for new users
-                    }).then(() => {
-                        console.log("User data saved to Realtime Database.");
-                        // Redirect or load the dashboard here if necessary
-                    }).catch((error) => {
-                        console.error("Error saving user data:", error);
-                    });
-                })
-                .catch((error) => {
-                    console.error("Error signing in with Google:", error);
-                });
-        });
-    </script>
+    <title>Game Hub</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">Welcome to CallMeGamer GameHub</h1>
-        <p class="description">Sign in to access your gaming dashboard</p>
-        <div class="google-btn" id="googleSignInBtn">
-            <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Icon">
-            Sign in with Google
+    <ul class="background">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <div class="navbar">
+        <ul>
+            <li onclick="window.location='#';">Game Hub</li>
+            <li onclick="window.location='spacetycoon';">Space Tycoon</li>
+            <li onclick="window.location='zombie';">Zombie Survival</li>
+            <li onclick="window.location='chess';">Chess Master</li>
+            <li onclick="window.location='knight';">Knight's Quest</li>
+            <li onclick="window.location='evolve';">Idle Evolution</li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h1 class="title">Welcome to CallMeGamer's Game Hub</h1>
+        <p class="description">
+            This is your central hub for all the exciting games developed by CallMeGamer. Select a game from the sidebar to start playing.
+        </p>
+
+        <div class="container">
+            <div class="card" onclick="window.location='spacetycoon';">
+                <div class="title">Space Tycoon</div>
+                <div class="more">Play Now</div>
+            </div>
+            <div class="card" onclick="window.location='zombie';">
+                <div class="title">Zombie Survival</div>
+                <div class="more">Play Now</div>
+            </div>
+            <div class="card" onclick="window.location='chess';">
+                <div class="title">Chess Master</div>
+                <div class="more">Play Now</div>
+            </div>
+            <div class="card" onclick="window.location='knight';">
+                <div class="title">Knight's Quest</div>
+                <div class="more">Play Now</div>
+            </div>
+            <div class="card" onclick="window.location='evolve';">
+                <div class="title">Idle Evolution</div>
+                <div class="more">Play Now</div>
+            </div>
         </div>
     </div>
+
+    <script src="scripts.js"></script>
 </body>
 </html>

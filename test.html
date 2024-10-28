@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMG GameHub - Login</title>
+    <title>CallMeGamer GameHub - Login</title>
     <style>
         /* Body Styling */
         body {
@@ -67,40 +67,66 @@
         }
     </style>
 
-    <!-- Google OAuth Client Library -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase libraries
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        // Firebase configuration using your provided credentials
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxlEBkfszBkZt6BVezv4_oS9_paOz9NXs",
+            authDomain: "callmegamergamehub.firebaseapp.com",
+            projectId: "callmegamergamehub",
+            storageBucket: "callmegamergamehub.appspot.com",
+            messagingSenderId: "640120758569",
+            appId: "1:640120758569:web:11370e01ffacdf2c1b1738",
+            databaseURL: "https://callmegamergamehub-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase app
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // Google sign-in provider setup
+        const provider = new GoogleAuthProvider();
+
+        // Function to handle Google Sign-In
+        document.getElementById('googleSignInBtn').addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("User signed in:", user);
+
+                    // Save the user's data in the Realtime Database
+                    const userId = user.uid;
+                    set(ref(db, 'users/' + userId), {
+                        username: user.displayName,
+                        email: user.email,
+                        currency: 100  // Starting currency for new users
+                    }).then(() => {
+                        console.log("User data saved to Realtime Database.");
+                        // Redirect or load the dashboard here if necessary
+                    }).catch((error) => {
+                        console.error("Error saving user data:", error);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error signing in with Google:", error);
+                });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Welcome to the CallMeGamer GameHub</h1>
+        <h1 class="title">Welcome to CallMeGamer GameHub</h1>
         <p class="description">Sign in to access your gaming dashboard</p>
-        <div id="g_id_onload"
-             data-client_id="YOUR_GOOGLE_CLIENT_ID"
-             data-callback="handleCredentialResponse">
-        </div>
-        <div class="google-btn" id="buttonDiv">
+        <div class="google-btn" id="googleSignInBtn">
             <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Icon">
             Sign in with Google
         </div>
     </div>
-
-    <script>
-        function handleCredentialResponse(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-            // Here you would handle the response and send it to your backend for authentication
-        }
-
-        window.onload = function() {
-            google.accounts.id.initialize({
-                client_id: "YOUR_GOOGLE_CLIENT_ID", // Replace with your Google client ID
-                callback: handleCredentialResponse
-            });
-
-            google.accounts.id.renderButton(
-                document.getElementById("buttonDiv"),
-                { theme: "outline", size: "large" }  // customization attributes
-            );
-        }
-    </script>
 </body>
 </html>

@@ -69,7 +69,7 @@
         // Import Firebase and Authentication modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
         
         // Firebase configuration
         const firebaseConfig = {
@@ -95,6 +95,30 @@
             statusMessage.style.color = color;
         }
 
+        // Function to check and initialize user data if new
+        async function initializeUserData(email, username) {
+            const userRef = ref(db, `users/${email}`);
+            try {
+                const snapshot = await get(userRef);
+                if (!snapshot.exists()) {
+                    // If no data exists for this user, initialize default values
+                    await set(userRef, {
+                        Username: username,
+                        Currency: 100,
+                        preference: "light"
+                    });
+                    console.log(`Initialized user data for ${username}`);
+                }
+                displayStatusMessage("Data initialized, redirecting...", "green");
+                setTimeout(() => {
+                    window.location.href = "dashboard"; // Redirect to dashboard
+                }, 1500);
+            } catch (error) {
+                console.error("Error initializing user data:", error);
+                displayStatusMessage("Error initializing user data.", "red");
+            }
+        }
+
         // Google Sign-In Function
         document.getElementById('google-signin').addEventListener('click', async () => {
             try {
@@ -103,19 +127,8 @@
 
                 if (user) {
                     const email = user.email.replace('.', '_'); // Firebase path-friendly email
-                    const userDataRef = ref(db, `users/${email}`);
-
-                    // Initialize user data in Firebase Realtime Database if not present
-                    set(userDataRef, {
-                        Username: user.displayName || "Guest",
-                        Currency: 100,
-                        preference: "light"
-                    }).then(() => {
-                        displayStatusMessage("Welcome, " + user.displayName + "! Redirecting...", "green");
-                        setTimeout(() => {
-                            window.location.href = "dashboard"; // Redirect to dashboard
-                        }, 1500);
-                    });
+                    const username = user.displayName || "Guest";
+                    await initializeUserData(email, username);
                 }
             } catch (error) {
                 console.error("Error signing in:", error);

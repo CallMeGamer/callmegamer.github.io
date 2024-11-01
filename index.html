@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
         body {
-            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            background: linear-gradient(to right, #1a1a1a, #333);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -16,39 +16,39 @@
             color: #fff;
         }
         .login-container {
-            background: white;
+            background: #2e2e2e;
             border-radius: 8px;
             padding: 20px;
             width: 100%;
             max-width: 400px;
             text-align: center;
-            color: #333;
+            color: #eee;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         #status-message {
             margin-top: 10px;
             font-size: 0.9rem;
-            color: #333;
+            color: #f5f5f5;
         }
 
-        /* Google Sign-In Button Styling */
+        /* Dark-themed Google Sign-In Button Styling */
         .gsi-material-button {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 10px;
-            background-color: #4285F4;
+            padding: 12px;
+            background-color: #3c4043;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 1rem;
             transition: background-color 0.3s;
             margin-top: 20px;
         }
         .gsi-material-button:hover {
-            background-color: #357ae8;
+            background-color: #5f6368;
         }
         .gsi-material-button-content-wrapper {
             display: flex;
@@ -66,7 +66,7 @@
 <body>
     <div class="login-container">
         <h1 class="text-3xl font-bold mb-4">Welcome to CallMeGamer GameHub</h1>
-        <p class="mb-6 text-gray-700">Sign in to access your gaming dashboard.</p>
+        <p class="mb-6 text-gray-400">Sign in to access your gaming dashboard.</p>
 
         <!-- Custom Google Sign-In Button -->
         <button id="google-signin" class="gsi-material-button">
@@ -112,19 +112,19 @@
         const provider = new GoogleAuthProvider();
 
         // Display status messages in the status message box
-        function displayStatusMessage(message, color = '#333') {
+        function displayStatusMessage(message, color = '#f5f5f5') {
             const statusMessage = document.getElementById('status-message');
             statusMessage.textContent = message;
             statusMessage.style.color = color;
         }
 
-        // Function to check and initialize user data if new
+        // Function to initialize user data if new
         async function initializeUserData(email, username) {
             const userRef = ref(db, `users/${email}`);
             try {
                 const snapshot = await get(userRef);
                 if (!snapshot.exists()) {
-                    // If no data exists for this user, initialize default values
+                    // Initialize default values if no data exists for this user
                     await set(userRef, {
                         Username: username,
                         Currency: 100,
@@ -132,7 +132,7 @@
                     });
                     console.log(`Initialized user data for ${username}`);
                 }
-                displayStatusMessage("Data initialized, redirecting...", "green");
+                displayStatusMessage("Login successful! Redirecting...", "green");
                 setTimeout(() => {
                     window.location.href = "dashboard"; // Redirect to dashboard
                 }, 1500);

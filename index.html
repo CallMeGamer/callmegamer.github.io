@@ -25,13 +25,6 @@
             color: #eee;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        #status-message {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #f5f5f5;
-            white-space: pre-line; /* For multiline debug messages */
-        }
-
         /* Dark-themed Google Sign-In Button Styling */
         .gsi-material-button {
             display: flex;
@@ -86,7 +79,7 @@
         </button>
 
         <!-- Status Message Box -->
-        <div id="status-message"></div>
+        <div id="status-message" style="display: none;"></div>
     </div>
 
     <script type="module">
@@ -112,51 +105,38 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        // Display status messages and debugging info in the status message box
-        function displayStatusMessage(message, color = '#f5f5f5') {
-            const statusMessage = document.getElementById('status-message');
-            statusMessage.textContent += message + "\n"; // Add each new message on a new line
-            statusMessage.style.color = color;
-        }
-
         // Google Sign-In and Data Initialization Function
         document.getElementById('google-signin').addEventListener('click', async () => {
-            displayStatusMessage("Sign-in button clicked"); // Debugging message
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                displayStatusMessage("Sign-in successful"); // Debugging message
 
                 if (user) {
                     const email = user.email.replace('.', '_'); // Firebase path-friendly email
                     const username = user.displayName || "Guest";
-                    displayStatusMessage(`User email: ${email}, Username: ${username}`); // Debugging message
 
                     // Initialize user data if new
                     const userRef = ref(db, `users/${email}`);
                     const snapshot = await get(userRef);
 
                     if (!snapshot.exists()) {
-                        displayStatusMessage("No user data found. Initializing new data."); // Debugging message
                         // Set default data for new users
                         await set(userRef, {
                             Username: username,
                             Currency: 100,
-                            preference: "light"
+                            "Theme Preference": "light"
                         });
-                        displayStatusMessage(`Initialized user data for ${username}`);
-                    } else {
-                        displayStatusMessage("User data already exists."); // Debugging message
                     }
 
                     // Redirect to dashboard on successful login
-                    displayStatusMessage("Login successful! Redirecting...", "green");
                     setTimeout(() => {
                         window.location.href = "dashboard";
                     }, 1500);
                 }
             } catch (error) {
-                displayStatusMessage("Error during sign-in or data initialization: " + error.message, "red");
+                console.error("Error during sign-in or data initialization:", error);
+                document.getElementById('status-message').style.display = "block";
+                document.getElementById('status-message').textContent = "Failed to sign in. Please try again.";
             }
         });
     </script>

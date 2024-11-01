@@ -92,7 +92,7 @@
         // Import Firebase and Authentication modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
         
         // Firebase configuration
         const firebaseConfig = {
@@ -118,31 +118,7 @@
             statusMessage.style.color = color;
         }
 
-        // Function to initialize user data if new
-        async function initializeUserData(email, username) {
-            const userRef = ref(db, `users/${email}`);
-            try {
-                const snapshot = await get(userRef);
-                if (!snapshot.exists()) {
-                    // Initialize default values if no data exists for this user
-                    await set(userRef, {
-                        Username: username,
-                        Currency: 100,
-                        preference: "light"
-                    });
-                    console.log(`Initialized user data for ${username}`);
-                }
-                displayStatusMessage("Login successful! Redirecting...", "green");
-                setTimeout(() => {
-                    window.location.href = "dashboard"; // Redirect to dashboard
-                }, 1500);
-            } catch (error) {
-                console.error("Error initializing user data:", error);
-                displayStatusMessage("Error initializing user data.", "red");
-            }
-        }
-
-        // Google Sign-In Function
+        // Google Sign-In and Data Initialization Function
         document.getElementById('google-signin').addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, provider);
@@ -151,7 +127,26 @@
                 if (user) {
                     const email = user.email.replace('.', '_'); // Firebase path-friendly email
                     const username = user.displayName || "Guest";
-                    await initializeUserData(email, username);
+
+                    // Initialize user data if new
+                    const userRef = ref(db, `users/${email}`);
+                    const snapshot = await get(userRef);
+
+                    if (!snapshot.exists()) {
+                        // Set default data for new users
+                        await set(userRef, {
+                            Username: username,
+                            Currency: 100,
+                            preference: "light"
+                        });
+                        console.log(`Initialized user data for ${username}`);
+                    }
+
+                    // Redirect to dashboard on successful login
+                    displayStatusMessage("Login successful! Redirecting...", "green");
+                    setTimeout(() => {
+                        window.location.href = "dashboard";
+                    }, 1500);
                 }
             } catch (error) {
                 console.error("Error signing in:", error);

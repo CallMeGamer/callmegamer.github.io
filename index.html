@@ -29,6 +29,7 @@
             margin-top: 10px;
             font-size: 0.9rem;
             color: #f5f5f5;
+            white-space: pre-line; /* For multiline debug messages */
         }
 
         /* Dark-themed Google Sign-In Button Styling */
@@ -111,41 +112,41 @@
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        // Display status messages in the status message box
+        // Display status messages and debugging info in the status message box
         function displayStatusMessage(message, color = '#f5f5f5') {
             const statusMessage = document.getElementById('status-message');
-            statusMessage.textContent = message;
+            statusMessage.textContent += message + "\n"; // Add each new message on a new line
             statusMessage.style.color = color;
         }
 
         // Google Sign-In and Data Initialization Function
         document.getElementById('google-signin').addEventListener('click', async () => {
-            console.log("Sign-in button clicked"); // Debugging log
+            displayStatusMessage("Sign-in button clicked"); // Debugging message
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                console.log("Sign-in successful"); // Debugging log
+                displayStatusMessage("Sign-in successful"); // Debugging message
 
                 if (user) {
                     const email = user.email.replace('.', '_'); // Firebase path-friendly email
                     const username = user.displayName || "Guest";
-                    console.log(`User email: ${email}, Username: ${username}`); // Debugging log
+                    displayStatusMessage(`User email: ${email}, Username: ${username}`); // Debugging message
 
                     // Initialize user data if new
                     const userRef = ref(db, `users/${email}`);
                     const snapshot = await get(userRef);
 
                     if (!snapshot.exists()) {
-                        console.log("No user data found. Initializing new data."); // Debugging log
+                        displayStatusMessage("No user data found. Initializing new data."); // Debugging message
                         // Set default data for new users
                         await set(userRef, {
                             Username: username,
                             Currency: 100,
                             preference: "light"
                         });
-                        console.log(`Initialized user data for ${username}`);
+                        displayStatusMessage(`Initialized user data for ${username}`);
                     } else {
-                        console.log("User data already exists."); // Debugging log
+                        displayStatusMessage("User data already exists."); // Debugging message
                     }
 
                     // Redirect to dashboard on successful login
@@ -155,8 +156,7 @@
                     }, 1500);
                 }
             } catch (error) {
-                console.error("Error during sign-in or data initialization:", error);
-                displayStatusMessage("Failed to sign in. Please try again.", "red");
+                displayStatusMessage("Error during sign-in or data initialization: " + error.message, "red");
             }
         });
     </script>

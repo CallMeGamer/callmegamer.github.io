@@ -92,7 +92,7 @@
         // Import Firebase and Authentication modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
         
         // Firebase configuration
         const firebaseConfig = {
@@ -120,19 +120,23 @@
 
         // Google Sign-In and Data Initialization Function
         document.getElementById('google-signin').addEventListener('click', async () => {
+            console.log("Sign-in button clicked"); // Debugging log
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
+                console.log("Sign-in successful"); // Debugging log
 
                 if (user) {
                     const email = user.email.replace('.', '_'); // Firebase path-friendly email
                     const username = user.displayName || "Guest";
+                    console.log(`User email: ${email}, Username: ${username}`); // Debugging log
 
                     // Initialize user data if new
                     const userRef = ref(db, `users/${email}`);
                     const snapshot = await get(userRef);
 
                     if (!snapshot.exists()) {
+                        console.log("No user data found. Initializing new data."); // Debugging log
                         // Set default data for new users
                         await set(userRef, {
                             Username: username,
@@ -140,6 +144,8 @@
                             preference: "light"
                         });
                         console.log(`Initialized user data for ${username}`);
+                    } else {
+                        console.log("User data already exists."); // Debugging log
                     }
 
                     // Redirect to dashboard on successful login
@@ -149,7 +155,7 @@
                     }, 1500);
                 }
             } catch (error) {
-                console.error("Error signing in:", error);
+                console.error("Error during sign-in or data initialization:", error);
                 displayStatusMessage("Failed to sign in. Please try again.", "red");
             }
         });
